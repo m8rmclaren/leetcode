@@ -4,7 +4,7 @@ from typing import List
 # elevation map where the width of each bar is 1, 
 # compute how much water it can trap after raining.
 
-class Solution1:
+class BrainstormSolution:
     def trap(self, height: List[int]) -> int:
         
         # We're given a list of heights representing
@@ -57,7 +57,7 @@ class Solution1:
     def waterInPuddle(self, dim):
         l, r = dim
 
-class Solution:
+class BruteForceSolution:
     def trap(self, height: List[int]) -> int:
         
         # We're given a list of heights representing
@@ -117,8 +117,6 @@ class Solution:
             while l >= 0:
                 if height[l] > l_max:
                     l_max = height[l]
-                elif height[l] < l_max:
-                    break
                 l -= 1
 
             # scroll r to the right-most greatest height
@@ -134,12 +132,58 @@ class Solution:
                 capacity += c
 
         return capacity
+
+class Solution:
+    def trap(self, height: List[int]) -> int:
+        
+        # We're given a list of heights representing
+        # the height of poles arranged horizontally.
+        # The list represents an elevation map.
+
+        # A brute force solution is to iterate over each index
+        # of the population map & for each index, find
+        # the highest peak to the left and right of index i.
+        # Then, the amount of water trappable at that index
+        # is given by min(height[l], height[l]) - height[i].
+
+        # This is a brute force solution & works in O(n^2).
+        
+        # Another way we could solve this is to precompute
+        # the min/max distances at each index so we can calculate
+        # the trapped water in linear time.
+
+        # Alternatively, we can use two-pointer directly
+        # to scroll the list of heights, tracking the minimum height
+        # of each index.
+
+        n = len(height)
+        l = 0
+        max_l = height[l]
+
+        r = n - 1
+        max_r = height[r]
+
+        res = 0
+
+        # Our l & r pointers scroll independently & will intersect at some point in
+        # the middle.
+        while l < r:
+            if max_l < max_r:
+                l += 1
+                max_l = max(max_l, height[l])
+                res += max_l - height[l]
+            else:
+                r -= 1
+                max_r = max(max_r, height[r])
+                res += max_r - height[r]
+            
+        return res
             
 
 s = Solution()
 
-# height = [0,1,0,2,1,0,1,3,2,1,2,1]
-# print(s.trap(height))
+height = [0,1,0,2,1,0,1,3,2,1,2,1]
+print(s.trap(height))
 
 height = [4,2,0,3,2,5]
 print(s.trap(height))
